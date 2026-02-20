@@ -49,7 +49,7 @@ mariadb:
 persistence:
   kuma:
     size: 1Gi
-    storageClass: "nfs-netapp-01"
+    storageClass: ""
   mariadb:
     size: 5Gi
-    storageClass: "nfs-netapp-01"
+    storageClass: ""
