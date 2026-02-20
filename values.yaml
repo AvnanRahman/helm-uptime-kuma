@@ -36,6 +36,3 @@ persistence:
   kuma:
     size: 1Gi
     storageClass: "nfs-netapp-01"
-  mariadb:
-    size: 2Gi
-    storageClass: "nfs-netapp-01"

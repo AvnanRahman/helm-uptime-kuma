@@ -12,18 +12,3 @@ spec:
   resources:
     requests:
       storage: {{ .Values.persistence.kuma.size }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mariadb-data
-  namespace: {{ .Release.Namespace }}
-spec:
-  {{- if .Values.persistence.mariadb.storageClass }}
-  storageClassName: "{{ .Values.persistence.mariadb.storageClass }}"
-  {{- end }}
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.persistence.mariadb.size }}
