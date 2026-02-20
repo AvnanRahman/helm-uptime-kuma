@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: kuma
+          image: "{{ .Values.kuma.image }}"
+          ports:
+            - containerPort: {{ .Values.kuma.port }}
+          env:
+            - name: UPTIME_KUMA_DB_TYPE
+              value: "{{ .Values.kuma.env.DB_TYPE }}"
+            - name: UPTIME_KUMA_DB_HOSTNAME
+              value: "{{ .Values.kuma.env.DB_HOST }}"
+            - name: UPTIME_KUMA_DB_PORT
+              value: "{{ .Values.kuma.env.DB_PORT }}"
+            - name: UPTIME_KUMA_DB_NAME
+              value: "{{ .Values.kuma.env.DB_NAME }}"
+            - name: UPTIME_KUMA_DB_USERNAME
+              value: "{{ .Values.kuma.env.DB_USER }}"
+            - name: UPTIME_KUMA_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kuma-secret
+                  key: DB_PASSWORD
+          securityContext:
+            runAsUser: {{ .Values.kuma.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.kuma.securityContext.runAsGroup }}
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kuma-data

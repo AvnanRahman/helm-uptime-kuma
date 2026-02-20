@@ -1,0 +1,41 @@
+kuma:
+  image: louislam/uptime-kuma:2.1.3-rootless
+  port: 3001
+  servicePort: 3001
+
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+
+  env:
+    DB_TYPE: mariadb
+    DB_HOST: mariadb
+    DB_PORT: 3306
+    DB_NAME: kuma_db
+    DB_USER: kuma_user
+    DB_PASSWORD: kuma123
+
+mariadb:
+  image: mariadb:11.4
+
+  securityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+
+  env:
+    MYSQL_ROOT_PASSWORD: root123
+    MYSQL_DATABASE: kuma_db
+    MYSQL_USER: kuma_user
+    MYSQL_PASSWORD: kuma123
+
+persistence:
+  kuma:
+    size: 1Gi
+    storageClass: "nfs-netapp-01"
+  mariadb:
+    size: 2Gi
+    storageClass: "nfs-netapp-01"

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceName: mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      securityContext:
+        fsGroup: {{ .Values.mariadb.securityContext.runAsGroup }}
+      containers:
+        - name: mariadb
+          image: "{{ .Values.mariadb.image }}"
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kuma-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: "{{ .Values.mariadb.env.MYSQL_DATABASE }}"
+            - name: MYSQL_USER
+              value: "{{ .Values.mariadb.env.MYSQL_USER }}"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kuma-secret
+                  key: MYSQL_PASSWORD
+          securityContext:
+            runAsUser: {{ .Values.mariadb.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.mariadb.securityContext.runAsGroup }}
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: mariadb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.persistence.mariadb.size }}
