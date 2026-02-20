@@ -16,6 +16,13 @@ kuma:
     DB_NAME: kuma_db
     DB_USER: kuma_user
     DB_PASSWORD: kuma123
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+    requests:
+      cpu: "250m"
+      memory: "128Mi"
 
 mariadb:
   image: mariadb:11.4
@@ -31,8 +38,18 @@ mariadb:
     MYSQL_DATABASE: kuma_db
     MYSQL_USER: kuma_user
     MYSQL_PASSWORD: kuma123
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
 
 persistence:
   kuma:
     size: 1Gi
+    storageClass: "nfs-netapp-01"
+  mariadb:
+    size: 5Gi
     storageClass: "nfs-netapp-01"

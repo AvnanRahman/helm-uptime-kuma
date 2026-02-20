@@ -41,6 +41,8 @@ spec:
             runAsGroup: {{ .Values.kuma.securityContext.runAsGroup }}
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+          resources:
+{{ toYaml .Values.kuma.resources | indent 12 }}
           volumeMounts:
             - name: data
               mountPath: /app/data
